@@ -1,4 +1,5 @@
 import { StyleSheet, View, Text, Pressable, ViewStyle, StyleProp } from "react-native";
+import { GlobalStyles } from "../../constants/styless";
 
 interface ButtonProps {
   onPress: () => void;
@@ -27,7 +28,7 @@ function Button({ children, onPress, style }: ButtonProps) {
     button: {
       borderRadius: 4,
       padding: 8,
-      backgroundColor: "#0C2D59",
+      backgroundColor: GlobalStyles.colors.primary700,
     },
     buttonText: {
       color: "white",
@@ -35,7 +36,7 @@ function Button({ children, onPress, style }: ButtonProps) {
     },
     pressed: {
       opacity: 0.75,
-      backgroundColor: "#c6affc",
+      backgroundColor: GlobalStyles.colors.primary100,
       borderRadius: 4,
     },
   });
