@@ -26,7 +26,7 @@ function Button({ children, onPress, style }: ButtonProps) {
 
   const styles = StyleSheet.create({
     button: {
-      borderRadius: 4,
+      borderRadius: 8,
       padding: 8,
       backgroundColor: GlobalStyles.colors.primary700,
     },
