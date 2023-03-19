@@ -12,6 +12,7 @@ import DashboardScreen from "./screens/DashboardScreen";
 import StakeScreen from "./screens/StakeScreen";
 import UnstakeScreen from "./screens/UnstakeScreen";
 import NFTStakeScreen from "./screens/NFTStakeScreen";
+import MoreDetailsScreen from "./screens/MoreDetailsScreen";
 
 const Stack = createStackNavigator();
 const BottomTabs = createBottomTabNavigator();
@@ -85,6 +86,18 @@ export default function App() {
         >
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="DashboardTabs" component={DashboardTabs} />
+          <Stack.Screen
+            name="MoreDetailsScreen"
+            component={MoreDetailsScreen}
+            options={{
+              title: "More Details",
+              headerShown: true,
+              headerTintColor: "white",
+              headerStyle: {
+                backgroundColor: GlobalStyles.colors.primary800,
+              },
+            }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </View>
