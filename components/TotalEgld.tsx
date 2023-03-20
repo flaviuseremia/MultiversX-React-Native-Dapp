@@ -9,7 +9,7 @@ type TotalEgldProps = {
 
 function TotalEgld({title, sum}: TotalEgldProps) {
   return (
-    <View>
+    <View style={styles.container}>
       <Text style={styles.text}>{title}</Text>
       <Text style={styles.text}>
         <Text style={styles.xText}>{sum}</Text> EGLD
@@ -19,6 +19,9 @@ function TotalEgld({title, sum}: TotalEgldProps) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+  },
   text: {
     fontSize: 36,
     marginVertical: 10,
