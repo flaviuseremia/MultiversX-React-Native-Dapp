@@ -38,7 +38,7 @@ function StakeScreen() {
     <SafeAreaView style={styles.container}>
       <Settings name="flavius11" />
       <View style={styles.textContainer}>
-        <TotalEgld title="Total EGLD" sum="100.00" />
+        <TotalEgld title="Total EGLD Available" sum="100.00" />
       </View>
       <SelectList
         data={data}
@@ -56,9 +56,7 @@ function StakeScreen() {
         </Text>
       </View>
       <KeyboardAvoidingView style={styles.keyboardContainer} behavior="height">
-        {/* View for input and text */}
         <View style={styles.inputAndTextContainer}>
-          {/* View for input only */}
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.input}
