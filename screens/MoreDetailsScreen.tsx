@@ -1,22 +1,36 @@
 import { View, Text, SafeAreaView, StyleSheet } from "react-native";
-import { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import Button from "../components/UI/Button";
 import Settings from "../components/Settings";
 import { GlobalStyles } from "../constants/styless";
 import TotalEgld from "../components/TotalEgld";
+import { getAvailableEgld } from "../util/infos";
+import { UserContext } from "../store/UserContext";
 
 function pressHandle() {}
 
 function MoreDetailsScreen() {
-  const [activeButton, setActiveButton] = useState("");
+  const { availableBalance } = useContext(UserContext);
+  const { setAvailableBalance } = useContext(UserContext);
+
+  const [activeButton, setActiveButton] = useState("Available");
 
   const handleButtonPress = (buttonText: string) => {
     setActiveButton(buttonText);
   };
 
   const isButtonActive = (buttonText: string) => {
-    return activeButton === buttonText;
+    if (activeButton === buttonText) {
+      useEffect(() => {
+        getAvailableEgld()
+          .then((response) => {
+            setAvailableBalance((response / 10 ** 18).toFixed(2));
+          })
+          .catch((error) => console.error(error));
+      }, [setAvailableBalance, activeButton]);
+      return true;
+    }
   };
 
   return (
@@ -53,7 +67,7 @@ function MoreDetailsScreen() {
           </View>
         </View>
         <View style={styles.displayContainer}>
-          <Text style={styles.displayText}>X EGLD </Text>
+          <Text style={styles.displayText}>{availableBalance} EGLD </Text>
         </View>
       </View>
     </SafeAreaView>
@@ -67,7 +81,7 @@ const styles = StyleSheet.create({
   textContainer: {
     alignItems: "center",
   },
-  
+
   horizontalButtonsContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
