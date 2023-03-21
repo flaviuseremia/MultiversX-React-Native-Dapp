@@ -13,6 +13,7 @@ import StakeScreen from "./screens/StakeScreen";
 import UnstakeScreen from "./screens/UnstakeScreen";
 import NFTStakeScreen from "./screens/NFTStakeScreen";
 import MoreDetailsScreen from "./screens/MoreDetailsScreen";
+import { UserProvider } from "./store/UserContext";
 
 const Stack = createStackNavigator();
 const BottomTabs = createBottomTabNavigator();
@@ -76,31 +77,33 @@ function DashboardTabs() {
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <StatusBar style="light" />
-      <NavigationContainer theme={MyTheme}>
-        <Stack.Navigator
-          screenOptions={{
-            headerShown: false,
-          }}
-        >
-          <Stack.Screen name="LoginScreen" component={LoginScreen} />
-          <Stack.Screen name="DashboardTabs" component={DashboardTabs} />
-          <Stack.Screen
-            name="MoreDetailsScreen"
-            component={MoreDetailsScreen}
-            options={{
-              title: "More Details",
-              headerShown: true,
-              headerTintColor: "white",
-              headerStyle: {
-                backgroundColor: GlobalStyles.colors.primary800,
-              },
+    <UserProvider>
+      <View style={styles.container}>
+        <StatusBar style="light" />
+        <NavigationContainer theme={MyTheme}>
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: false,
             }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </View>
+          >
+            <Stack.Screen name="LoginScreen" component={LoginScreen} />
+            <Stack.Screen name="DashboardTabs" component={DashboardTabs} />
+            <Stack.Screen
+              name="MoreDetailsScreen"
+              component={MoreDetailsScreen}
+              options={{
+                title: "More Details",
+                headerShown: true,
+                headerTintColor: "white",
+                headerStyle: {
+                  backgroundColor: GlobalStyles.colors.primary800,
+                },
+              }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </View>
+    </UserProvider>
   );
 }
 
