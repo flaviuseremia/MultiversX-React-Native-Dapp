@@ -1,21 +1,19 @@
 import {
   StyleSheet,
-  Text,
   SafeAreaView,
   Platform,
   StatusBar,
   View,
 } from "react-native";
-import { useNavigation } from '@react-navigation/native';
-import MoreDetailsScreen from "./MoreDetailsScreen";
+import React, { useState, useEffect, useContext } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 import { RootStackParamList } from "../constants/types";
 import Settings from "../components/Settings";
 import Button from "../components/UI/Button";
-import { GlobalStyles } from "../constants/styless";
-import React from "react";
 import TotalEgld from "../components/TotalEgld";
+import { getUserName } from "../util/infos";
+import { UserContext } from "../store/UserContext";
 
 type DashboardScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -27,16 +25,25 @@ type Props = {
 };
 
 function DashboardScreen({ navigation }: Props) {
+  const { setUsername } = useContext(UserContext);
+  const {username} = useContext(UserContext);
+
+  useEffect(() => {
+    getUserName()
+      .then((response) => { setUsername(response)})
+      .catch((error) => console.error(error));
+  }, [setUsername]);
+
   function moreDetailsHandle() {
-    navigation.navigate('MoreDetailsScreen');
+    navigation.navigate("MoreDetailsScreen");
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <Settings name="flavius11" />
+      <Settings name={username} />
       <View style={styles.buttonAndTextContainer}>
         <View style={styles.textContainer}>
-          <TotalEgld title="Total EGLD" sum="100.00"/>
+          <TotalEgld title="Total EGLD" sum="100.00" />
         </View>
         <Button
           children={"Show More Details"}
