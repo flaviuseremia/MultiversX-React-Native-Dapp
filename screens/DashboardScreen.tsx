@@ -5,14 +5,14 @@ import {
   StatusBar,
   View,
 } from "react-native";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 import { RootStackParamList } from "../constants/types";
 import Settings from "../components/Settings";
 import Button from "../components/UI/Button";
 import TotalEgld from "../components/TotalEgld";
-import { getUserName } from "../util/infos";
+import { getUserName, getTotalEgld } from "../util/infos";
 import { UserContext } from "../store/UserContext";
 
 type DashboardScreenNavigationProp = StackNavigationProp<
@@ -25,12 +25,24 @@ type Props = {
 };
 
 function DashboardScreen({ navigation }: Props) {
+  const { username } = useContext(UserContext);
+  const { totalBalance } = useContext(UserContext);
   const { setUsername } = useContext(UserContext);
-  const {username} = useContext(UserContext);
+  const { setTotalBalance } = useContext(UserContext);
+
+  useEffect(() => {
+    getTotalEgld()
+      .then((response) => {
+        setTotalBalance(response);
+      })
+      .catch((error) => console.error(error));
+  }, [getTotalEgld]);
 
   useEffect(() => {
     getUserName()
-      .then((response) => { setUsername(response)})
+      .then((response) => {
+        setUsername(response);
+      })
       .catch((error) => console.error(error));
   }, [setUsername]);
 
@@ -43,7 +55,7 @@ function DashboardScreen({ navigation }: Props) {
       <Settings name={username} />
       <View style={styles.buttonAndTextContainer}>
         <View style={styles.textContainer}>
-          <TotalEgld title="Total EGLD" sum="100.00" />
+          <TotalEgld title="Total EGLD" sum={totalBalance} />
         </View>
         <Button
           children={"Show More Details"}
