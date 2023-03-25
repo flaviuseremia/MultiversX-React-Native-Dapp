@@ -8,21 +8,34 @@ import {
   TextInput,
   KeyboardAvoidingView,
 } from "react-native";
+import { SelectList } from "react-native-dropdown-select-list";
+import { useState, useContext, useEffect } from "react";
+
 import Settings from "../components/Settings";
 import TotalEgld from "../components/TotalEgld";
-import { SelectList } from "react-native-dropdown-select-list";
-import { useState } from "react";
 import { GlobalStyles } from "../constants/styless";
 import Button from "../components/UI/Button";
+import { UserContext } from "../store/UserContext";
+import { getStakedEgld } from "../util/infos";
 
 function UnstakeScreen() {
   const [selectedProvider, setSelectedProvider] = useState("");
+  const { stakedBalance } = useContext(UserContext);
+  const { setStakedBalance } = useContext(UserContext);
 
   const data = [
     { key: "1", value: "Trust Staking" },
     { key: "2", value: "Titan Stake" },
     { key: "3", value: "Carpathian Stake" },
   ];
+
+  useEffect(() => {
+    getStakedEgld()
+      .then((response) => {
+        setStakedBalance((response / 10 ** 18).toFixed(2));
+      })
+      .catch((error) => console.error(error));
+  }, [getStakedEgld]);
 
   function emptyHandle() {}
   const [number, setNumber] = useState("");
@@ -38,7 +51,7 @@ function UnstakeScreen() {
     <SafeAreaView style={styles.container}>
       <Settings name="flavius11" />
       <View style={styles.textContainer}>
-        <TotalEgld title="Total EGLD Staked" sum="100.00" />
+        <TotalEgld title="Total EGLD Staked" sum={stakedBalance} />
       </View>
       <SelectList
         data={data}
