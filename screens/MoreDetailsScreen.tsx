@@ -1,24 +1,20 @@
 import { View, Text, SafeAreaView, StyleSheet } from "react-native";
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  Dispatch,
-  SetStateAction,
-} from "react";
+import React, { useState, useEffect, useContext, Dispatch } from "react";
 
 import Button from "../components/UI/Button";
 import Settings from "../components/Settings";
 import { GlobalStyles } from "../constants/styless";
 import TotalEgld from "../components/TotalEgld";
-import { getAvailableEgld, getStakedEgld } from "../util/infos";
+import { getAvailableEgld, getStakedEgld, getRewardsEgld } from "../util/infos";
 import { UserContext } from "../store/UserContext";
 
 function MoreDetailsScreen() {
   const { availableBalance } = useContext(UserContext);
   const { stakedBalance } = useContext(UserContext);
+  const { rewardsBalance } = useContext(UserContext);
   const { setAvailableBalance } = useContext(UserContext);
   const { setStakedBalance } = useContext(UserContext);
+  const { setRewardsBalance } = useContext(UserContext);
 
   const [activeButton, setActiveButton] = useState("Available");
 
@@ -33,6 +29,7 @@ function MoreDetailsScreen() {
   const buttonFunctions: ButtonFunctions = {
     Available: getAvailableEgld,
     Staked: getStakedEgld,
+    Rewards: getRewardsEgld,
   };
 
   const isButtonActive = (
@@ -50,10 +47,6 @@ function MoreDetailsScreen() {
       return true;
     }
   };
-
-  function isValueActive() {
-    return true;
-  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -85,7 +78,7 @@ function MoreDetailsScreen() {
               onPress={() => handleButtonPress("Rewards")}
               style={[
                 styles.horizontalButton,
-                isButtonActive("Rewards", setAvailableBalance) &&
+                isButtonActive("Rewards", setRewardsBalance) &&
                   styles.activeButton,
               ]}
             />
@@ -93,7 +86,11 @@ function MoreDetailsScreen() {
         </View>
         <View style={styles.displayContainer}>
           <Text style={styles.displayText}>
-            {activeButton === "Available" ? availableBalance : stakedBalance}{" "}
+            {activeButton === "Available"
+              ? availableBalance
+              : activeButton === "Staked"
+              ? stakedBalance
+              : rewardsBalance}
             EGLD
           </Text>
         </View>
