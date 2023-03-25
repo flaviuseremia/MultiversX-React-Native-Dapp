@@ -25,3 +25,14 @@ export async function getAvailableEgld() {
         console.error(error);
     });
 }
+
+export async function getStakedEgld() {
+    return axios.get(`${apiUrl}/${type}/${myAddress}/delegation`).then(response => {
+        const staked_balance = response.data[0].userActiveStake;
+        console.log(`Staked Egld: ${staked_balance}`);
+        return staked_balance;
+    })
+    .catch(error => {
+        console.error(error);
+    });
+}
