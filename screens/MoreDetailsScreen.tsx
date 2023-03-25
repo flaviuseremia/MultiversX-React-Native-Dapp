@@ -5,13 +5,20 @@ import Button from "../components/UI/Button";
 import Settings from "../components/Settings";
 import { GlobalStyles } from "../constants/styless";
 import TotalEgld from "../components/TotalEgld";
-import { getAvailableEgld, getStakedEgld, getRewardsEgld } from "../util/infos";
+import {
+  getAvailableEgld,
+  getStakedEgld,
+  getRewardsEgld,
+  getTotalEgld,
+} from "../util/infos";
 import { UserContext } from "../store/UserContext";
 
 function MoreDetailsScreen() {
+  const { totalBalance } = useContext(UserContext);
   const { availableBalance } = useContext(UserContext);
   const { stakedBalance } = useContext(UserContext);
   const { rewardsBalance } = useContext(UserContext);
+  const { setTotalBalance } = useContext(UserContext);
   const { setAvailableBalance } = useContext(UserContext);
   const { setStakedBalance } = useContext(UserContext);
   const { setRewardsBalance } = useContext(UserContext);
@@ -48,12 +55,20 @@ function MoreDetailsScreen() {
     }
   };
 
+  useEffect(() => {
+    getTotalEgld()
+      .then((response) => {
+        setTotalBalance(response);
+      })
+      .catch((error) => console.error(error));
+  }, [getTotalEgld]);
+
   return (
     <SafeAreaView style={styles.container}>
       <Settings name="flavius11" />
       <View>
         <View style={styles.textContainer}>
-          <TotalEgld title="Total EGLD" sum="100.00" />
+          <TotalEgld title="Total EGLD" sum={totalBalance} />
           <View style={styles.horizontalButtonsContainer}>
             <Button
               children={"Available"}
