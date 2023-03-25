@@ -36,3 +36,14 @@ export async function getStakedEgld() {
         console.error(error);
     });
 }
+
+export async function getRewardsEgld() {
+    return axios.get(`${apiUrl}/${type}/${myAddress}/delegation`).then(response => {
+        const reward_balance = response.data[0].claimableRewards;
+        console.log(`Rewards Egld: ${reward_balance}`);
+        return reward_balance;
+    })
+    .catch(error => {
+        console.error(error);
+    });
+}
