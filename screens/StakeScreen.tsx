@@ -16,19 +16,23 @@ import Settings from "../components/Settings";
 import TotalEgld from "../components/TotalEgld";
 import { GlobalStyles } from "../constants/styless";
 import Button from "../components/UI/Button";
-import { getAvailableEgld } from "../util/infos";
+import { getAvailableEgld, getProvidersList, Provider } from "../util/infos";
 import { UserContext } from "../store/UserContext";
 
 function StakeScreen() {
   const [selectedProvider, setSelectedProvider] = useState("");
   const { availableBalance } = useContext(UserContext);
   const { setAvailableBalance } = useContext(UserContext);
+  const [providers, setProviders] = useState<[string,string][]>([]);
 
-  const data = [
-    { key: "1", value: "Trust Staking" },
-    { key: "2", value: "Titan Stake" },
-    { key: "3", value: "Carpathian Stake" },
-  ];
+  useEffect(() => {
+    getProvidersList()
+      .then((providersList: [string, string][]) => {
+        setProviders(providersList);
+        console.log(providersList);
+      })
+      .catch((error) => console.error(error));
+  }, [getProvidersList]);
 
   useEffect(() => {
     getAvailableEgld()
@@ -55,7 +59,7 @@ function StakeScreen() {
         <TotalEgld title="Total EGLD Available" sum={availableBalance} />
       </View>
       <SelectList
-        data={data}
+        data={providers}
         setSelected={(val: string) => setSelectedProvider(val)}
         save="value"
         inputStyles={{ color: GlobalStyles.colors.secondary200 }}
@@ -64,6 +68,7 @@ function StakeScreen() {
         dropdownStyles={{ backgroundColor: GlobalStyles.colors.primary700 }}
         placeholder="Select Provider"
       />
+
       <View style={styles.displayContainer}>
         <Text style={styles.displayText}>
           <Text style={styles.xText}>X</Text> EGLD staked
