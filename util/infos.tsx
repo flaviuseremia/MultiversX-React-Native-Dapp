@@ -42,9 +42,9 @@ export async function getTotalEgld() {
     getRewardsEgld(),
   ]);
   const total =
-    Number((available / 10 ** 18).toFixed(2)) +
-    Number((stake / 10 ** 18).toFixed(2)) +
-    Number((rewards / 10 ** 18).toFixed(2));
+    (Number((available / 10 ** 18)) +
+    Number((stake / 10 ** 18)) +
+    Number((rewards / 10 ** 18))).toFixed(2);
   console.log(`Total Egld: ${total}`);
   return total.toString();
 }
