@@ -1,18 +1,24 @@
 import { View, Text, SafeAreaView, StyleSheet } from "react-native";
-import React, { useState, useEffect, useContext } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  Dispatch,
+  SetStateAction,
+} from "react";
 
 import Button from "../components/UI/Button";
 import Settings from "../components/Settings";
 import { GlobalStyles } from "../constants/styless";
 import TotalEgld from "../components/TotalEgld";
-import { getAvailableEgld } from "../util/infos";
+import { getAvailableEgld, getStakedEgld } from "../util/infos";
 import { UserContext } from "../store/UserContext";
-
-function pressHandle() {}
 
 function MoreDetailsScreen() {
   const { availableBalance } = useContext(UserContext);
+  const { stakedBalance } = useContext(UserContext);
   const { setAvailableBalance } = useContext(UserContext);
+  const { setStakedBalance } = useContext(UserContext);
 
   const [activeButton, setActiveButton] = useState("Available");
 
@@ -20,18 +26,34 @@ function MoreDetailsScreen() {
     setActiveButton(buttonText);
   };
 
-  const isButtonActive = (buttonText: string) => {
+  type ButtonFunctions = {
+    [key: string]: () => Promise<any>;
+  };
+
+  const buttonFunctions: ButtonFunctions = {
+    Available: getAvailableEgld,
+    Staked: getStakedEgld,
+  };
+
+  const isButtonActive = (
+    buttonText: string,
+    setFunc: Dispatch<React.SetStateAction<string>>
+  ) => {
     if (activeButton === buttonText) {
       useEffect(() => {
-        getAvailableEgld()
+        buttonFunctions[buttonText]()
           .then((response) => {
-            setAvailableBalance((response / 10 ** 18).toFixed(2));
+            setFunc((response / 10 ** 18).toFixed(2));
           })
           .catch((error) => console.error(error));
-      }, [setAvailableBalance, activeButton]);
+      }, [setFunc, activeButton]);
       return true;
     }
   };
+
+  function isValueActive() {
+    return true;
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -45,7 +67,8 @@ function MoreDetailsScreen() {
               onPress={() => handleButtonPress("Available")}
               style={[
                 styles.horizontalButton,
-                isButtonActive("Available") && styles.activeButton,
+                isButtonActive("Available", setAvailableBalance) &&
+                  styles.activeButton,
               ]}
             />
             <Button
@@ -53,7 +76,8 @@ function MoreDetailsScreen() {
               onPress={() => handleButtonPress("Staked")}
               style={[
                 styles.horizontalButton,
-                isButtonActive("Staked") && styles.activeButton,
+                isButtonActive("Staked", setStakedBalance) &&
+                  styles.activeButton,
               ]}
             />
             <Button
@@ -61,13 +85,17 @@ function MoreDetailsScreen() {
               onPress={() => handleButtonPress("Rewards")}
               style={[
                 styles.horizontalButton,
-                isButtonActive("Rewards") && styles.activeButton,
+                isButtonActive("Rewards", setAvailableBalance) &&
+                  styles.activeButton,
               ]}
             />
           </View>
         </View>
         <View style={styles.displayContainer}>
-          <Text style={styles.displayText}>{availableBalance} EGLD </Text>
+          <Text style={styles.displayText}>
+            {activeButton === "Available" ? availableBalance : stakedBalance}{" "}
+            EGLD
+          </Text>
         </View>
       </View>
     </SafeAreaView>
