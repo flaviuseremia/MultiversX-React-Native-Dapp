@@ -8,21 +8,35 @@ import {
   TextInput,
   KeyboardAvoidingView,
 } from "react-native";
+
+import { SelectList } from "react-native-dropdown-select-list";
+import { useState, useContext, useEffect } from "react";
+
 import Settings from "../components/Settings";
 import TotalEgld from "../components/TotalEgld";
-import { SelectList } from "react-native-dropdown-select-list";
-import { useState } from "react";
 import { GlobalStyles } from "../constants/styless";
 import Button from "../components/UI/Button";
+import { getAvailableEgld } from "../util/infos";
+import { UserContext } from "../store/UserContext";
 
 function StakeScreen() {
   const [selectedProvider, setSelectedProvider] = useState("");
+  const { availableBalance } = useContext(UserContext);
+  const { setAvailableBalance } = useContext(UserContext);
 
   const data = [
     { key: "1", value: "Trust Staking" },
     { key: "2", value: "Titan Stake" },
     { key: "3", value: "Carpathian Stake" },
   ];
+
+  useEffect(() => {
+    getAvailableEgld()
+      .then((response) => {
+        setAvailableBalance((response / 10 ** 18).toFixed(2));
+      })
+      .catch((error) => console.error(error));
+  }, [getAvailableEgld]);
 
   function emptyHandle() {}
   const [number, setNumber] = useState("");
@@ -38,7 +52,7 @@ function StakeScreen() {
     <SafeAreaView style={styles.container}>
       <Settings name="flavius11" />
       <View style={styles.textContainer}>
-        <TotalEgld title="Total EGLD Available" sum="100.00" />
+        <TotalEgld title="Total EGLD Available" sum={availableBalance} />
       </View>
       <SelectList
         data={data}
