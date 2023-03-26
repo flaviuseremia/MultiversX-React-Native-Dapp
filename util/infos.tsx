@@ -7,20 +7,20 @@ const type = "accounts";
 const providers = "providers";
 
 export interface Provider {
-    provider: string;
-    owner: string;
-    serviceFee: number;
-    delegationCap: string;
-    apr: number;
-    numUsers: number;
-    cumulatedRewards: string;
-    identity: string;
-    numNodes: number;
-    stake: string;
-    topUp: string;
-    locked: string;
-    featured: boolean;
-  }
+  provider: string;
+  owner: string;
+  serviceFee: number;
+  delegationCap: string;
+  apr: number;
+  numUsers: number;
+  cumulatedRewards: string;
+  identity: string;
+  numNodes: number;
+  stake: string;
+  topUp: string;
+  locked: string;
+  featured: boolean;
+}
 
 export async function getUserName() {
   return axios
@@ -41,10 +41,11 @@ export async function getTotalEgld() {
     getStakedEgld(),
     getRewardsEgld(),
   ]);
-  const total =
-    (Number((available / 10 ** 18)) +
-    Number((stake / 10 ** 18)) +
-    Number((rewards / 10 ** 18))).toFixed(2);
+  const total = (
+    Number(available / 10 ** 18) +
+    Number(stake / 10 ** 18) +
+    Number(rewards / 10 ** 18)
+  ).toFixed(2);
   console.log(`Total Egld: ${total}`);
   return total.toString();
 }
@@ -88,15 +89,19 @@ export async function getRewardsEgld() {
     });
 }
 
-export async function getProvidersList(): Promise<[key: string, identity: string][]> {
-    return axios
+export async function getProvidersList(): Promise<
+  [key: string, value: string][]
+> {
+  return axios
     .get(`${apiUrl}/${providers}`)
     .then((response) => {
       const my_response = response.data;
-      const result: [key: string, identity: string][] = [];
+      const result: [key: string, value: string][] = [];
       let key = 0;
       my_response.forEach((item: Provider) => {
-        result.push([`${key++}. `, item.identity]);
+        if (item.identity !== undefined) {
+          result.push([`${key++}. `, item.identity]);
+        }
       });
       console.log(result);
       return result;
