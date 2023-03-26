@@ -22,6 +22,14 @@ export interface Provider {
   featured: boolean;
 }
 
+export interface UserStake {
+  address: string;
+  contract: string;
+  userUnBondable: string;
+  userActiveStake: string;
+  claimableRewards: string;
+}
+
 export async function getUserName() {
   return axios
     .get(`${apiUrl}/${type}/${myAddress}`)
@@ -48,7 +56,7 @@ export async function getTotalEgld() {
   return total.toString();
 }
 
-export async function getAvailableEgld() {
+export async function getAvailableEgld(): Promise<number> {
   return axios
     .get(`${apiUrl}/${type}/${myAddress}`)
     .then((response) => {
@@ -58,6 +66,7 @@ export async function getAvailableEgld() {
     })
     .catch((error) => {
       console.error(error);
+      throw error;
     });
 }
 
@@ -96,24 +105,50 @@ export async function getRewardsEgld() {
 }
 
 export async function getProvidersList(): Promise<
-  [key: string, value: string][]
+  [key: string, value: { name: string; address: string }][]
 > {
   return axios
     .get(`${apiUrl}/${providers}`)
     .then((response) => {
       const my_response = response.data;
-      const result: [key: string, value: string][] = [];
+      const result: [key: string, value: { name: string; address: string }][] =
+        [];
       let key = 0;
       my_response.forEach((item: Provider) => {
         if (item.identity !== undefined) {
-          result.push([`${key++}. `, item.identity]);
+          result.push([
+            `${key++}. `,
+            { name: item.identity, address: item.provider },
+          ]);
         }
       });
-      console.log(result);
+      //console.log(result);
       return result;
     })
     .catch((error) => {
       console.error(error);
       return [];
+    });
+}
+
+export async function getStakedEgldProviders(): Promise<
+  { address: string; userActiveStake: string }[]
+> {
+  return axios
+    .get(`${apiUrl}/${type}/${myAddress}/delegation`)
+    .then((response) => {
+      const userActiveStakeAddresses: {
+        address: string;
+        userActiveStake: string;
+      }[] = response.data.map((entry: UserStake) => ({
+        address: entry.contract,
+        userActiveStake: entry.userActiveStake,
+      }));
+      //console.log(userActiveStakeAddresses);
+      return userActiveStakeAddresses;
+    })
+    .catch((error) => {
+      console.error(error);
+      throw error;
     });
 }
