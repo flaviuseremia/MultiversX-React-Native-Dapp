@@ -16,18 +16,31 @@ import TotalEgld from "../components/TotalEgld";
 import { GlobalStyles } from "../constants/styless";
 import Button from "../components/UI/Button";
 import { UserContext } from "../store/UserContext";
-import { getStakedEgld } from "../util/infos";
+import { getStakedEgld, getProvidersList } from "../util/infos";
 
 function UnstakeScreen() {
-  const [selectedProvider, setSelectedProvider] = useState("");
   const { stakedBalance } = useContext(UserContext);
   const { setStakedBalance } = useContext(UserContext);
 
-  const data = [
-    { key: "1", value: "Trust Staking" },
-    { key: "2", value: "Titan Stake" },
-    { key: "3", value: "Carpathian Stake" },
-  ];
+  const [selectedProvider, setSelectedProvider] = useState("");
+  const [providersLocal, setProvidersLocal] = useState<
+    { key: string; value: string }[]
+  >([]);
+
+  useEffect(() => {
+    getProvidersList()
+      .then((providersList: [string, string][]) => {
+        const transformedArr = providersList.map(([index, value]) => ({
+          key: index.trim().slice(0, -1),
+          value: value
+            .replace("_", " ")
+            .replace(/\b\w/g, (char) => char.toUpperCase()),
+        }));
+
+        setProvidersLocal(transformedArr);
+      })
+      .catch((error) => console.error(error));
+  }, [getProvidersList]);
 
   useEffect(() => {
     getStakedEgld()
@@ -54,7 +67,7 @@ function UnstakeScreen() {
         <TotalEgld title="Total EGLD Staked" sum={stakedBalance} />
       </View>
       <SelectList
-        data={data}
+        data={providersLocal}
         setSelected={(val: string) => setSelectedProvider(val)}
         save="value"
         inputStyles={{ color: GlobalStyles.colors.secondary200 }}
