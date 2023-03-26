@@ -41,11 +41,9 @@ export async function getTotalEgld() {
     getStakedEgld(),
     getRewardsEgld(),
   ]);
-  const total = (
-    Number(available / 10 ** 18) +
-    Number(stake / 10 ** 18) +
-    Number(rewards / 10 ** 18)
-  ).toFixed(2);
+  const total = (Number(available) + Number(stake) + Number(rewards)).toFixed(
+    2
+  );
   console.log(`Total Egld: ${total}`);
   return total.toString();
 }
@@ -54,7 +52,7 @@ export async function getAvailableEgld() {
   return axios
     .get(`${apiUrl}/${type}/${myAddress}`)
     .then((response) => {
-      const available_balance = response.data.balance;
+      const available_balance = response.data.balance / 10 ** 18;
       console.log(`Available Egld: ${available_balance}`);
       return available_balance;
     })
@@ -67,7 +65,11 @@ export async function getStakedEgld() {
   return axios
     .get(`${apiUrl}/${type}/${myAddress}/delegation`)
     .then((response) => {
-      const staked_balance = response.data[0].userActiveStake;
+      const staked_balance = response.data.reduce(
+        (acc: number, cur: { userActiveStake: number }) =>
+          acc + cur.userActiveStake / 10 ** 18,
+        0
+      );
       console.log(`Staked Egld: ${staked_balance}`);
       return staked_balance;
     })
@@ -80,7 +82,11 @@ export async function getRewardsEgld() {
   return axios
     .get(`${apiUrl}/${type}/${myAddress}/delegation`)
     .then((response) => {
-      const reward_balance = response.data[0].claimableRewards;
+      const reward_balance = response.data.reduce(
+        (acc: number, cur: { claimableRewards: number }) =>
+          acc + cur.claimableRewards / 10 ** 18,
+        0
+      );
       console.log(`Rewards Egld: ${reward_balance}`);
       return reward_balance;
     })

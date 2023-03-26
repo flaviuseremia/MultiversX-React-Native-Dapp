@@ -47,7 +47,7 @@ function MoreDetailsScreen() {
       useEffect(() => {
         buttonFunctions[buttonText]()
           .then((response) => {
-            setFunc((response / 10 ** 18).toFixed(2));
+            setFunc((response).toFixed(2));
           })
           .catch((error) => console.error(error));
       }, [setFunc, activeButton]);
