@@ -8,7 +8,6 @@ import {
   TextInput,
   KeyboardAvoidingView,
 } from "react-native";
-
 import { SelectList } from "react-native-dropdown-select-list";
 import { useState, useContext, useEffect } from "react";
 
@@ -20,16 +19,25 @@ import { getAvailableEgld, getProvidersList, Provider } from "../util/infos";
 import { UserContext } from "../store/UserContext";
 
 function StakeScreen() {
-  const [selectedProvider, setSelectedProvider] = useState("");
   const { availableBalance } = useContext(UserContext);
   const { setAvailableBalance } = useContext(UserContext);
-  const [providers, setProviders] = useState<[string,string][]>([]);
+
+  const [selectedProvider, setSelectedProvider] = useState("");
+  const [providersLocal, setProvidersLocal] = useState<
+    { key: string; value: string }[]
+  >([]);
 
   useEffect(() => {
     getProvidersList()
       .then((providersList: [string, string][]) => {
-        setProviders(providersList);
-        console.log(providersList);
+        const transformedArr = providersList.map(([index, value]) => ({
+          key: index.trim().slice(0, -1),
+          value: value
+            .replace("_", " ")
+            .replace(/\b\w/g, (char) => char.toUpperCase()),
+        }));
+
+        setProvidersLocal(transformedArr);
       })
       .catch((error) => console.error(error));
   }, [getProvidersList]);
@@ -59,7 +67,7 @@ function StakeScreen() {
         <TotalEgld title="Total EGLD Available" sum={availableBalance} />
       </View>
       <SelectList
-        data={providers}
+        data={providersLocal}
         setSelected={(val: string) => setSelectedProvider(val)}
         save="value"
         inputStyles={{ color: GlobalStyles.colors.secondary200 }}
@@ -68,7 +76,6 @@ function StakeScreen() {
         dropdownStyles={{ backgroundColor: GlobalStyles.colors.primary700 }}
         placeholder="Select Provider"
       />
-
       <View style={styles.displayContainer}>
         <Text style={styles.displayText}>
           <Text style={styles.xText}>X</Text> EGLD staked
