@@ -16,36 +16,56 @@ import TotalEgld from "../components/TotalEgld";
 import { GlobalStyles } from "../constants/styless";
 import Button from "../components/UI/Button";
 import { UserContext } from "../store/UserContext";
-import { getStakedEgld, getProvidersList } from "../util/infos";
+import {
+  getStakedEgld,
+  getProvidersList,
+  getStakedEgldProviders,
+} from "../util/infos";
 
 function UnstakeScreen() {
   const { stakedBalance } = useContext(UserContext);
   const { setStakedBalance } = useContext(UserContext);
 
+  const [stakedEgldOnProvider, setStakedEgldOnProvider] = useState("X");
   const [selectedProvider, setSelectedProvider] = useState("");
   const [providersLocal, setProvidersLocal] = useState<
-    { key: string; value: string }[]
+    { key: string; value: { name: string; address: string } }[]
+  >([]);
+  const [providersLocalStaked, setProvidersLocalStaked] = useState<
+    {
+      address: string;
+      userActiveStake: string;
+    }[]
   >([]);
 
   useEffect(() => {
     getProvidersList()
-      .then((providersList: [string, string][]) => {
+      .then((providersList: [string, { name: string; address: string }][]) => {
         const transformedArr = providersList.map(([index, value]) => ({
           key: index.trim().slice(0, -1),
-          value: value
-            .replace("_", " ")
-            .replace(/\b\w/g, (char) => char.toUpperCase()),
+          value: {
+            name: value.name
+              .replace("_", " ")
+              .replace(/\b\w/g, (char) => char.toUpperCase()),
+            address: value.address,
+          },
         }));
 
         setProvidersLocal(transformedArr);
       })
       .catch((error) => console.error(error));
-  }, [getProvidersList]);
+
+    getStakedEgldProviders()
+      .then((response) => {
+        setProvidersLocalStaked(response);
+      })
+      .catch((error) => console.error(error));
+  }, []);
 
   useEffect(() => {
     getStakedEgld()
       .then((response) => {
-        setStakedBalance((response / 10 ** 18).toFixed(2));
+        setStakedBalance(response.toFixed(2));
       })
       .catch((error) => console.error(error));
   }, [getStakedEgld]);
@@ -60,6 +80,21 @@ function UnstakeScreen() {
     }
   };
 
+  function onSelectList() {
+    const address = providersLocal.find(
+      (entry) => entry.value.name === selectedProvider
+    )?.value.address;
+
+    const userActiveStake = providersLocalStaked.find(
+      (entry) => entry.address === address
+    )?.userActiveStake;
+    const stakedEgld = userActiveStake
+      ? (Number(userActiveStake) / 10 ** 18).toFixed(2)
+      : "X";
+
+    setStakedEgldOnProvider(stakedEgld);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <Settings name="flavius11" />
@@ -67,7 +102,10 @@ function UnstakeScreen() {
         <TotalEgld title="Total EGLD Staked" sum={stakedBalance} />
       </View>
       <SelectList
-        data={providersLocal}
+        data={providersLocal.map((provider) => ({
+          label: provider.key,
+          value: provider.value.name,
+        }))}
         setSelected={(val: string) => setSelectedProvider(val)}
         save="value"
         inputStyles={{ color: GlobalStyles.colors.secondary200 }}
@@ -75,10 +113,11 @@ function UnstakeScreen() {
         boxStyles={{ backgroundColor: GlobalStyles.colors.primary700 }}
         dropdownStyles={{ backgroundColor: GlobalStyles.colors.primary700 }}
         placeholder="Select Provider"
+        onSelect={onSelectList}
       />
       <View style={styles.displayContainer}>
         <Text style={styles.displayText}>
-          <Text style={styles.xText}>X</Text> EGLD staked
+          <Text style={styles.xText}>{stakedEgldOnProvider}</Text> EGLD staked
         </Text>
       </View>
       <KeyboardAvoidingView style={styles.keyboardContainer} behavior="height">
