@@ -9,7 +9,6 @@ import {
   getAvailableEgld,
   getStakedEgld,
   getRewardsEgld,
-  getTotalEgld,
 } from "../util/infos";
 import { UserContext } from "../store/UserContext";
 
@@ -18,7 +17,6 @@ function MoreDetailsScreen() {
   const { availableBalance } = useContext(UserContext);
   const { stakedBalance } = useContext(UserContext);
   const { rewardsBalance } = useContext(UserContext);
-  const { setTotalBalance } = useContext(UserContext);
   const { setAvailableBalance } = useContext(UserContext);
   const { setStakedBalance } = useContext(UserContext);
   const { setRewardsBalance } = useContext(UserContext);
@@ -55,14 +53,6 @@ function MoreDetailsScreen() {
       return true;
     }
   };
-
-  useEffect(() => {
-    getTotalEgld()
-      .then((response) => {
-        setTotalBalance(response);
-      })
-      .catch((error) => console.error(error));
-  }, [getTotalEgld]);
 
   return (
     <SafeAreaView style={styles.container}>

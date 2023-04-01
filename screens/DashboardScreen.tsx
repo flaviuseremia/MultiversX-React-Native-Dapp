@@ -29,11 +29,17 @@ function DashboardScreen({ navigation }: Props) {
   const { totalBalance } = useContext(UserContext);
   const { setUsername } = useContext(UserContext);
   const { setTotalBalance } = useContext(UserContext);
+  const { setStakedBalance } = useContext(UserContext);
+  const { setAvailableBalance } = useContext(UserContext);
+  const { setRewardsBalance } = useContext(UserContext);
 
   useEffect(() => {
     getTotalEgld()
       .then((response) => {
-        setTotalBalance(response);
+        setTotalBalance(response.total);
+        setAvailableBalance(response.available);
+        setStakedBalance(response.stake);
+        setRewardsBalance(response.rewards);
       })
       .catch((error) => console.error(error));
   }, [getTotalEgld]);
