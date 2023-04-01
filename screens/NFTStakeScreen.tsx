@@ -8,6 +8,7 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { useState, useContext, useEffect } from "react";
 
@@ -22,25 +23,41 @@ import { getNfts } from "../util/infos";
 
 function emptyHandle() {}
 
+function SplashScreen() {
+  return (
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Text style={styles.textLoading}>Loading...</Text>
+      <ActivityIndicator size="large" color={GlobalStyles.colors.secondary200} />
+    </View>
+  );
+}
+
 function NFTStakeScreen() {
   const { username } = useContext(UserContext);
 
-  const [selectedImage, setSelectedImage] = useState("");
+  const [selectedImage, setSelectedImage] = useState(wizzard36);
   const [urls, setUrls] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getNfts()
       .then((response) => {
         setUrls(response);
+        setIsLoading(false);
+        setSelectedImage(response[1]);
       })
       .catch((error) => console.error(error));
   }, []);
 
   const renderItem = ({ item }: { item: string }) => (
     <TouchableOpacity onPress={() => setSelectedImage(item)}>
-      <Image source={{uri: item}} style={styles.itemImage} />
+      <Image source={{ uri: item }} style={styles.itemImage} />
     </TouchableOpacity>
   );
+
+  if (isLoading) {
+    return <SplashScreen />;
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -100,6 +117,10 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 20,
     minWidth: "30%",
+  },
+  textLoading: {
+    color: GlobalStyles.colors.secondary200,
+    fontSize: 24,
   },
 });
 
