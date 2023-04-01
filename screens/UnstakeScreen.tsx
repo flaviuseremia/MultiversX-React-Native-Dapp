@@ -25,6 +25,7 @@ import {
 function UnstakeScreen() {
   const { stakedBalance } = useContext(UserContext);
   const { setStakedBalance } = useContext(UserContext);
+  const { username } = useContext(UserContext);
 
   const [stakedEgldOnProvider, setStakedEgldOnProvider] = useState("X");
   const [selectedProvider, setSelectedProvider] = useState("");
@@ -97,7 +98,7 @@ function UnstakeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Settings name="flavius11" />
+      <Settings name={username} />
       <View style={styles.textContainer}>
         <TotalEgld title="Total EGLD Staked" sum={stakedBalance} />
       </View>

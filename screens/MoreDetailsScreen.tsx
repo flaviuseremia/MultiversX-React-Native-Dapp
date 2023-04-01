@@ -22,6 +22,7 @@ function MoreDetailsScreen() {
   const { setAvailableBalance } = useContext(UserContext);
   const { setStakedBalance } = useContext(UserContext);
   const { setRewardsBalance } = useContext(UserContext);
+  const { username } = useContext(UserContext);
 
   const [activeButton, setActiveButton] = useState("Available");
 
@@ -65,7 +66,7 @@ function MoreDetailsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Settings name="flavius11" />
+      <Settings name={username} />
       <View>
         <View style={styles.textContainer}>
           <TotalEgld title="Total EGLD" sum={totalBalance} />

@@ -25,6 +25,7 @@ import { UserContext } from "../store/UserContext";
 function StakeScreen() {
   const { availableBalance } = useContext(UserContext);
   const { setAvailableBalance } = useContext(UserContext);
+  const { username } = useContext(UserContext);
 
   const [stakedEgldOnProvider, setStakedEgldOnProvider] = useState("X");
   const [selectedProvider, setSelectedProvider] = useState("");
@@ -97,7 +98,7 @@ function StakeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Settings name="flavius11" />
+      <Settings name={username} />
       <View style={styles.textContainer}>
         <TotalEgld title="Total EGLD Available" sum={availableBalance} />
       </View>

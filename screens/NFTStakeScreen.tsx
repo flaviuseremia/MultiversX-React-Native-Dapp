@@ -9,7 +9,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { useState } from "react";
+import { useState, useContext } from "react";
 
 import wizzard36 from "../assets/36.png";
 import wizzard163 from "../assets/163.png";
@@ -21,12 +21,15 @@ import Settings from "../components/Settings";
 import Button from "../components/UI/Button";
 import { GlobalStyles } from "../constants/styless";
 import ImageZoom from "../components/ImageZoom";
+import { UserContext } from "../store/UserContext";
 
 const images = [wizzard36, wizzard163, wizzard2577, wizzard2632, wizzards_logo];
 
 function emptyHandle() {}
 
 function NFTStakeScreen() {
+  const { username } = useContext(UserContext);
+
   const [selectedImage, setSelectedImage] = useState(wizzard36);
   const renderItem = ({ item }: { item: any }) => (
     <TouchableOpacity onPress={() => setSelectedImage(item)}>
@@ -36,7 +39,7 @@ function NFTStakeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Settings name="flavius11" />
+      <Settings name={username} />
       <View style={styles.textContainer}>
         <Text style={styles.text}>My NFT's</Text>
       </View>
