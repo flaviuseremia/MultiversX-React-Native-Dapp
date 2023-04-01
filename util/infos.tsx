@@ -30,6 +30,56 @@ export interface UserStake {
   claimableRewards: string;
 }
 
+export interface Nft {
+  identifier: string;
+  collection: string;
+  attributes: string;
+  nonce: number;
+  type: string;
+  name: string;
+  creator: string;
+  royalties: number;
+  uris: string[];
+  url: string;
+  media: {
+    url: string;
+    fileSize: number;
+    fileType: string;
+    originalUrl: string;
+    thumbnailUrl: string;
+  }[];
+  isWhitelistedStorage: boolean;
+  tags: string[];
+  metadata: {
+    description: string;
+    dna: string;
+    attributes: {
+      trait_type: string;
+      value: string;
+    }[];
+    compiler: string;
+    rarity: {
+      avgRarity: number;
+      statRarity: number;
+      rarityScore: number;
+      rarityScoreNormed: number;
+      usedTraitsCount: number;
+    };
+    createdAt: number;
+  };
+  ticker: string;
+  score: number;
+  rank: number;
+  isNsfw: boolean;
+  assets: {
+    website: string;
+    description: string;
+    status: string;
+    pngUrl: string;
+    svgUrl: string;
+  };
+}
+
 export async function getUserName() {
   return axios
     .get(`${apiUrl}/${type}/${myAddress}`)
@@ -150,5 +200,23 @@ export async function getStakedEgldProviders(): Promise<
     .catch((error) => {
       console.error(error);
       throw error;
+    });
+}
+
+export async function getNfts(): Promise<string[]> {
+  return axios
+    .get(`${apiUrl}/${type}/${myAddress}/nfts`)
+    .then((response) => {
+      const urls = response.data.reduce((acc: string[], nft: Nft) => {
+        if(nft.url) {
+          acc.push(nft.url);
+        }
+        return acc;
+      }, [])
+      console.log(urls)
+      return urls;
+    })
+    .catch((error) => {
+      console.error(error);
     });
 }
