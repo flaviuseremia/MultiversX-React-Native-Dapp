@@ -9,31 +9,36 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 
 import wizzard36 from "../assets/36.png";
-import wizzard163 from "../assets/163.png";
-import wizzard2577 from "../assets/2577.png";
-import wizzard2632 from "../assets/2632.png";
-import wizzards_logo from "../assets/wizards_logo.png";
 
 import Settings from "../components/Settings";
 import Button from "../components/UI/Button";
 import { GlobalStyles } from "../constants/styless";
 import ImageZoom from "../components/ImageZoom";
 import { UserContext } from "../store/UserContext";
-
-const images = [wizzard36, wizzard163, wizzard2577, wizzard2632, wizzards_logo];
+import { getNfts } from "../util/infos";
 
 function emptyHandle() {}
 
 function NFTStakeScreen() {
   const { username } = useContext(UserContext);
 
-  const [selectedImage, setSelectedImage] = useState(wizzard36);
-  const renderItem = ({ item }: { item: any }) => (
+  const [selectedImage, setSelectedImage] = useState("");
+  const [urls, setUrls] = useState<string[]>([]);
+
+  useEffect(() => {
+    getNfts()
+      .then((response) => {
+        setUrls(response);
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
+  const renderItem = ({ item }: { item: string }) => (
     <TouchableOpacity onPress={() => setSelectedImage(item)}>
-      <Image source={item} style={styles.itemImage} />
+      <Image source={{uri: item}} style={styles.itemImage} />
     </TouchableOpacity>
   );
 
@@ -46,7 +51,7 @@ function NFTStakeScreen() {
       <ImageZoom imageUri={selectedImage} />
       <View style={styles.flatListContainer}>
         <FlatList
-          data={images}
+          data={urls}
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()}
           horizontal
