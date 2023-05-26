@@ -37,6 +37,8 @@ function DashboardScreen({ navigation }: Props) {
     getTotalEgld()
       .then((response) => {
         setTotalBalance(response.total);
+        console.log(`Total Egld: ${totalBalance}`);
+        // Add the calls here and update the context, after delete the calls from the other places and take the infos from context
         setAvailableBalance(response.available);
         setStakedBalance(response.stake);
         setRewardsBalance(response.rewards);

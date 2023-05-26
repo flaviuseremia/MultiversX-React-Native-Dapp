@@ -103,7 +103,15 @@ export async function getTotalEgld() {
     2
   );
   console.log(`Total Egld: ${total}`);
-  return total.toString();
+
+  const egldData = {
+    total: total.toString(),
+    available: available.toFixed(2).toString(),
+    stake: stake.toFixed(2).toString(),
+    rewards: rewards.toFixed(2).toString(),
+  };
+
+  return egldData;
 }
 
 export async function getAvailableEgld(): Promise<number> {
@@ -194,7 +202,6 @@ export async function getStakedEgldProviders(): Promise<
         address: entry.contract,
         userActiveStake: entry.userActiveStake,
       }));
-      //console.log(userActiveStakeAddresses);
       return userActiveStakeAddresses;
     })
     .catch((error) => {
