@@ -1,8 +1,6 @@
 import axios from "axios";
 
 const apiUrl = "https://api.multiversx.com";
-const myAddress =
-  "erd1a96qqf72tjnv9wrxz8mqgue7x6wr2wjy7ryxga6m5ep723j6d95q6qrlhx";
 const type = "accounts";
 const providers = "providers";
 
@@ -80,7 +78,7 @@ export interface Nft {
   };
 }
 
-export async function getUserName() {
+export async function getUserName(myAddress: string) {
   return axios
     .get(`${apiUrl}/${type}/${myAddress}`)
     .then((response) => {
@@ -93,11 +91,11 @@ export async function getUserName() {
     });
 }
 
-export async function getTotalEgld() {
+export async function getTotalEgld(myAddress: string) {
   const [available, stake, rewards] = await Promise.all([
-    getAvailableEgld(),
-    getStakedEgld(),
-    getRewardsEgld(),
+    getAvailableEgld(myAddress),
+    getStakedEgld(myAddress),
+    getRewardsEgld(myAddress),
   ]);
   const total = (Number(available) + Number(stake) + Number(rewards)).toFixed(
     2
@@ -114,7 +112,7 @@ export async function getTotalEgld() {
   return egldData;
 }
 
-export async function getAvailableEgld(): Promise<number> {
+export async function getAvailableEgld(myAddress: string): Promise<number> {
   return axios
     .get(`${apiUrl}/${type}/${myAddress}`)
     .then((response) => {
@@ -128,7 +126,7 @@ export async function getAvailableEgld(): Promise<number> {
     });
 }
 
-export async function getStakedEgld() {
+export async function getStakedEgld(myAddress: string) {
   return axios
     .get(`${apiUrl}/${type}/${myAddress}/delegation`)
     .then((response) => {
@@ -145,7 +143,7 @@ export async function getStakedEgld() {
     });
 }
 
-export async function getRewardsEgld() {
+export async function getRewardsEgld(myAddress: string) {
   return axios
     .get(`${apiUrl}/${type}/${myAddress}/delegation`)
     .then((response) => {
@@ -189,9 +187,9 @@ export async function getProvidersList(): Promise<
     });
 }
 
-export async function getStakedEgldProviders(): Promise<
-  { address: string; userActiveStake: string }[]
-> {
+export async function getStakedEgldProviders(
+  myAddress: string
+): Promise<{ address: string; userActiveStake: string }[]> {
   return axios
     .get(`${apiUrl}/${type}/${myAddress}/delegation`)
     .then((response) => {
@@ -210,17 +208,17 @@ export async function getStakedEgldProviders(): Promise<
     });
 }
 
-export async function getNfts(): Promise<string[]> {
+export async function getNfts(myAddress: string): Promise<string[]> {
   return axios
     .get(`${apiUrl}/${type}/${myAddress}/nfts`)
     .then((response) => {
       const urls = response.data.reduce((acc: string[], nft: Nft) => {
-        if(nft.url) {
+        if (nft.url) {
           acc.push(nft.url);
         }
         return acc;
-      }, [])
-      console.log(urls)
+      }, []);
+      console.log(urls);
       return urls;
     })
     .catch((error) => {

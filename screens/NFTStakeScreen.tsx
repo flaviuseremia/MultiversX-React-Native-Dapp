@@ -27,20 +27,24 @@ function SplashScreen() {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text style={styles.textLoading}>Loading...</Text>
-      <ActivityIndicator size="large" color={GlobalStyles.colors.secondary200} />
+      <ActivityIndicator
+        size="large"
+        color={GlobalStyles.colors.secondary200}
+      />
     </View>
   );
 }
 
 function NFTStakeScreen() {
   const { username } = useContext(UserContext);
+  const { address } = useContext(UserContext);
 
   const [selectedImage, setSelectedImage] = useState(wizzard36);
   const [urls, setUrls] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getNfts()
+    getNfts(address)
       .then((response) => {
         setUrls(response);
         setIsLoading(false);

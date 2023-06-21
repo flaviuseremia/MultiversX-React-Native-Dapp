@@ -26,6 +26,7 @@ function UnstakeScreen() {
   const { stakedBalance } = useContext(UserContext);
   const { setStakedBalance } = useContext(UserContext);
   const { username } = useContext(UserContext);
+  const { address } = useContext(UserContext);
 
   const [stakedEgldOnProvider, setStakedEgldOnProvider] = useState("X");
   const [selectedProvider, setSelectedProvider] = useState("");
@@ -56,7 +57,7 @@ function UnstakeScreen() {
       })
       .catch((error) => console.error(error));
 
-    getStakedEgldProviders()
+    getStakedEgldProviders(address)
       .then((response) => {
         setProvidersLocalStaked(response);
       })
@@ -64,7 +65,7 @@ function UnstakeScreen() {
   }, []);
 
   useEffect(() => {
-    getStakedEgld()
+    getStakedEgld(address)
       .then((response) => {
         setStakedBalance(response.toFixed(2));
       })

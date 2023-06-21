@@ -5,11 +5,7 @@ import Button from "../components/UI/Button";
 import Settings from "../components/Settings";
 import { GlobalStyles } from "../constants/styless";
 import TotalEgld from "../components/TotalEgld";
-import {
-  getAvailableEgld,
-  getStakedEgld,
-  getRewardsEgld,
-} from "../util/infos";
+import { getAvailableEgld, getStakedEgld, getRewardsEgld } from "../util/infos";
 import { UserContext } from "../store/UserContext";
 
 function MoreDetailsScreen() {
@@ -21,6 +17,7 @@ function MoreDetailsScreen() {
   const { setStakedBalance } = useContext(UserContext);
   const { setRewardsBalance } = useContext(UserContext);
   const { username } = useContext(UserContext);
+  const { address } = useContext(UserContext);
 
   const [activeButton, setActiveButton] = useState("Available");
 
@@ -29,13 +26,13 @@ function MoreDetailsScreen() {
   };
 
   type ButtonFunctions = {
-    [key: string]: () => Promise<any>;
+    [key: string]: () => Promise<number>;
   };
 
   const buttonFunctions: ButtonFunctions = {
-    Available: getAvailableEgld,
-    Staked: getStakedEgld,
-    Rewards: getRewardsEgld,
+    Available: () => getAvailableEgld(address),
+    Staked: () => getStakedEgld(address),
+    Rewards: () => getRewardsEgld(address),
   };
 
   const isButtonActive = (
@@ -46,7 +43,7 @@ function MoreDetailsScreen() {
       useEffect(() => {
         buttonFunctions[buttonText]()
           .then((response) => {
-            setFunc((response).toFixed(2));
+            setFunc(response.toFixed(2));
           })
           .catch((error) => console.error(error));
       }, [setFunc, activeButton]);

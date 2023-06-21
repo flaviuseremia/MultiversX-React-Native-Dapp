@@ -27,6 +27,7 @@ type Props = {
 function DashboardScreen({ navigation }: Props) {
   const { username } = useContext(UserContext);
   const { totalBalance } = useContext(UserContext);
+  const { address } = useContext(UserContext);
   const { setUsername } = useContext(UserContext);
   const { setTotalBalance } = useContext(UserContext);
   const { setStakedBalance } = useContext(UserContext);
@@ -34,7 +35,7 @@ function DashboardScreen({ navigation }: Props) {
   const { setRewardsBalance } = useContext(UserContext);
 
   useEffect(() => {
-    getTotalEgld()
+    getTotalEgld(address)
       .then((response) => {
         setTotalBalance(response.total);
         console.log(`Total Egld: ${totalBalance}`);
@@ -47,7 +48,7 @@ function DashboardScreen({ navigation }: Props) {
   }, [getTotalEgld]);
 
   useEffect(() => {
-    getUserName()
+    getUserName(address)
       .then((response) => {
         setUsername(response);
       })
